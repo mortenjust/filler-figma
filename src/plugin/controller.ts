@@ -21,7 +21,15 @@ function handleFillWithImages(keyword: string) {
   var completed = 0;
   var total = nodes.length;
   nodes.forEach((node) => {
-    if (node.type === 'RECTANGLE') {
+    if (node.type === 'RECTANGLE'
+    || node.type === 'ELLIPSE'
+    || node.type === 'POLYGON'
+    || node.type === 'STAR'
+    || node.type === 'TEXT'
+    || node.type === 'VECTOR'
+    || node.type === 'LINE'
+    || node.type === 'FRAME'    
+    ) {
 
       // make the fill gray so we get immediate feedback while images are loading
       node.fills = [{ type: 'SOLID', color: { r: 0.5, g: 0.5, b: 0.5 } }];
@@ -53,7 +61,6 @@ function handleFillWithImages(keyword: string) {
 // Tell the UI that the user has selected or deselected some nodes
 function sendSelectionChange() {
   const nodes = figma.currentPage.selection;
-  console.log('selectionchange', nodes);
   figma.ui.postMessage({
     type: 'selection-change',
     count: nodes.length,
@@ -68,7 +75,7 @@ function sendProgressUpdate(progress: number) {
   });
 }
 
-function fillNodeWithImage(node: RectangleNode, image: Image) {
+function fillNodeWithImage(node: any, image: Image) {
   node.fills = [{
     type: 'IMAGE',
     imageHash: image.hash,

@@ -14,7 +14,7 @@ function App() {
     onFill();
   }
 
-  const onFill = () => {
+  const onFill = () => {  
     parent.postMessage({ pluginMessage: { type: 'fill-with-images', keyword } }, '*');
   }
   const canFill = selectedNodesCount > 0
