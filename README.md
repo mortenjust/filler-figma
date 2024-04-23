@@ -7,5 +7,6 @@ Fills selected rectangles with Unsplash images based on an given keyword (option
 1. Check out the repo into a folder. 
 2. Go to the folder in Terminal
 3. If you don't have yarn, install it
-4. Run `yarn build:watch`
-5. Figma > Plugin > Developer > Install from manifest > choose `manifest.json` in the repo folder
+4. Run `yarn` to install
+5. Run `yarn build:watch`
+6. Figma > Plugin > Developer > Install from manifest > choose `manifest.json` in the repo folder
