@@ -22,7 +22,6 @@ export function ProgressBar({ progress }: { progress: number }) {
             }}
           ></div>
         </div>
-        {progress * 100}%
       </div>
     );
   }

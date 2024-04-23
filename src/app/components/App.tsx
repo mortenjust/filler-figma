@@ -16,9 +16,7 @@ function App() {
   const onFill = () => {
     parent.postMessage({ pluginMessage: { type: 'fill-with-images', keyword } }, '*');
   }
-
-  // if needed, canFill is true when all selected are rectangles
-  // const canFill = selectedNodesCount > 0 && selectedNodeTypes.every(type => type === 'RECTANGLE');
+  const canFill = selectedNodesCount > 0
 
   return (
     <div>
@@ -34,8 +32,14 @@ function App() {
           <ProgressBar progress={fillProgress} />
         </>
       )}
-      <div>
-      </div>
+
+      {/* This may not be needed as we're showing the count in the button */}
+      { !canFill && (
+        <div
+        style = {{ marginTop: 50, color: '#888'}}
+
+        >Select one or more rectangles to fill</div>
+      ) }
     </div>
 
   )

@@ -1,5 +1,8 @@
 figma.showUI(__html__);
 
+
+// handle events 
+
 figma.on('selectionchange', sendSelectionChange);
 figma.on('run', sendSelectionChange)
 
@@ -21,7 +24,8 @@ function handleFillWithImages(keyword: string) {
 
       const imageUrl = getImageUrl(node.width, node.height, keyword);
 
-      sendProgressUpdate(0);
+      // start progress
+      sendProgressUpdate(0.01);
 
       // @ts-ignore for some reason
       figma.createImageAsync(imageUrl).then((image: Image) => {
