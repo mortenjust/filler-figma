@@ -1,39 +1,26 @@
 import React from 'react';
-import logo from '../assets/logo.svg';
 import '../styles/ui.css';
+import { ProgressBar } from './progress-bar';
+import { useFillProgress } from '../hooks/use-fill-progress';
+import { useNodeSelection } from '../hooks/use-selection';
 
 function App() {
 
-  const [progress, setProgress] = React.useState(0);
   const [keyword, setKeyword] = React.useState('');
+  const progress = useFillProgress();
+  const [selectedNodesCount, selectedNodeTypes] = useNodeSelection();
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    onFill();
+  }
 
   const onFill = () => {
     parent.postMessage({ pluginMessage: { type: 'fill-with-images', keyword } }, '*');
   }
 
-  const onCancel = () => {
-    parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
-  };
-
-  React.useEffect(() => {
-    // This is how we read messages sent from the plugin controller
-    window.onmessage = (event) => {
-      const { type, progress } = event.data.pluginMessage;
-      switch (type) {
-        case 'fill-progress':
-          setProgress(progress);
-          break;
-        default:
-          break;
-      }
-    };
-  }, []);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onFill();
-  }
+  // if needed, canFill is true when all selected are rectangles
+  // const canFill = selectedNodesCount > 0 && selectedNodeTypes.every(type => type === 'RECTANGLE');
 
   return (
     <div>
@@ -41,24 +28,11 @@ function App() {
         <input value={keyword}
           placeholder='Enter keyword'
           onChange={(e) => setKeyword(e.target.value)} />
-        <button type="submit" id="create">
-          Fill
-        </button>
+        <SubmitButton count={selectedNodesCount} />
       </form>
+
       {progress > 0 && progress < 1 && (
-        <div>
-          <div
-            style={{
-              width: '100%',
-              height: 10,
-              backgroundColor: '#ccc',
-              borderRadius: 5,
-              marginTop: 10,
-            }}
-          >
-          </div>
-          {progress * 100}
-        </div>
+        <ProgressBar progress={progress} />
       )}
       <div>
       </div>
@@ -66,6 +40,23 @@ function App() {
 
   )
 }
-
-
 export default App;
+
+function SubmitButton({ count }: { count: number }) {
+  return (
+    <button
+      className={count > 0 ? "primary" : ""}
+      type="submit">
+      <div style={{display:"flex", gap: 10}}>
+        <div>
+          Fill
+        </div>
+        <div style={{
+          opacity: 0.5,
+        }}>
+          {count}
+        </div>
+      </div>
+    </button>
+  )
+}

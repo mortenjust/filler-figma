@@ -1,6 +1,16 @@
 figma.showUI(__html__);
 
 
+figma.on('selectionchange', () => {
+  const nodes = figma.currentPage.selection;
+  console.log('selectionchange', nodes);
+  figma.ui.postMessage({
+    type: 'selection-change',
+    count: nodes.length, 
+    nodeTypes: nodes.map(node => node.type)
+  });
+});
+
 
 figma.ui.onmessage = (msg) => {
 
