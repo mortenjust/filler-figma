@@ -22,6 +22,11 @@ export function useFigma() {
                     break;
             }
         };
+        
+        // clean up
+        return () => {
+            window.onmessage = null;
+        }
     }, []);
 
     return { fillProgress, selectedNodesCount, selectedNodeTypes };
