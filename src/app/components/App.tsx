@@ -3,17 +3,14 @@ import logo from '../assets/logo.svg';
 import '../styles/ui.css';
 
 function App() {
-  const textbox = React.useRef<HTMLInputElement>(undefined);
 
-  const countRef = React.useCallback((element: HTMLInputElement) => {
-    if (element) element.value = '5';
-    textbox.current = element;
-  }, []);
+  const [progress, setProgress] = React.useState(0);
+  const [keyword, setKeyword] = React.useState('');
 
-  const onCreate = () => {
-    const count = parseInt(textbox.current.value, 10);
-    parent.postMessage({ pluginMessage: { type: 'create-rectangles', count } }, '*');
-  };
+
+  const onFill = () => {
+    parent.postMessage({ pluginMessage: { type: 'fill-with-images', keyword } }, '*');
+  }
 
   const onCancel = () => {
     parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
@@ -22,26 +19,53 @@ function App() {
   React.useEffect(() => {
     // This is how we read messages sent from the plugin controller
     window.onmessage = (event) => {
-      const { type, message } = event.data.pluginMessage;
-      if (type === 'create-rectangles') {
-        console.log(`Figma Says: ${message}`);
+      const { type, progress } = event.data.pluginMessage;
+      switch (type) {
+        case 'fill-progress':
+          setProgress(progress);
+          break;
+        default:
+          break;
       }
     };
   }, []);
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onFill();
+  }
+
   return (
     <div>
-      <img src={logo} />
-      <h2>Rectangle Creator</h2>
-      <p>
-        Count: <input ref={countRef} />
-      </p>
-      <button id="create" onClick={onCreate}>
-        Create
-      </button>
-      <button onClick={onCancel}>Cancel</button>
+      <form onSubmit={handleSubmit}>
+        <input value={keyword}
+          placeholder='Enter keyword'
+          onChange={(e) => setKeyword(e.target.value)} />
+        <button type="submit" id="create">
+          Fill
+        </button>
+      </form>
+      {progress > 0 && progress < 1 && (
+        <div>
+          <div
+            style={{
+              width: '100%',
+              height: 10,
+              backgroundColor: '#ccc',
+              borderRadius: 5,
+              marginTop: 10,
+            }}
+          >
+          </div>
+          {progress * 100}
+        </div>
+      )}
+      <div>
+      </div>
     </div>
-  );
+
+  )
 }
+
 
 export default App;
