@@ -7,9 +7,7 @@ import { SubmitButton } from './submit-button';
 function App() {
 
   const [keyword, setKeyword] = React.useState('');
-  const { fillProgress, selectedNodesCount, selectedNodeTypes } = useFigma();
-  /// SelectedNodeTypes is an array of strings if you want to check the types of the selected nodes
-  // Currently, it only fills Rectangles
+  const { fillProgress, selectedNodesCount } = useFigma(); // also gives you selectedNodeTypes
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
