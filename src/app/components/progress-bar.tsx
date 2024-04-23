@@ -7,7 +7,7 @@ export function ProgressBar({ progress }: { progress: number }) {
           style={{
             width: '100%',
             height: 10,
-            backgroundColor: '#ccc',
+            backgroundColor: '#eee',
             borderRadius: 5,
             marginTop: 10,
           }}
@@ -17,7 +17,7 @@ export function ProgressBar({ progress }: { progress: number }) {
               width: `${progress * 100}%`,
               transition: 'width 0.1s',
               height: '100%',
-              backgroundColor: 'blue',
+              backgroundColor: 'black',
               borderRadius: 5,
             }}
           ></div>

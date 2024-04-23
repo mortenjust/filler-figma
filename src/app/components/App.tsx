@@ -1,14 +1,12 @@
 import React from 'react';
 import '../styles/ui.css';
 import { ProgressBar } from './progress-bar';
-import { useFillProgress } from '../hooks/use-fill-progress';
-import { useNodeSelection } from '../hooks/use-selection';
+import { useFigma } from '../hooks/use-figma';
 
 function App() {
 
   const [keyword, setKeyword] = React.useState('');
-  const progress = useFillProgress();
-  const [selectedNodesCount, selectedNodeTypes] = useNodeSelection();
+  const { fillProgress, selectedNodesCount, selectedNodeTypes } = useFigma();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,8 +29,10 @@ function App() {
         <SubmitButton count={selectedNodesCount} />
       </form>
 
-      {progress > 0 && progress < 1 && (
-        <ProgressBar progress={progress} />
+      {fillProgress > 0 && fillProgress < 1 && (
+        <>
+          <ProgressBar progress={fillProgress} />
+        </>
       )}
       <div>
       </div>
@@ -47,7 +47,7 @@ function SubmitButton({ count }: { count: number }) {
     <button
       className={count > 0 ? "primary" : ""}
       type="submit">
-      <div style={{display:"flex", gap: 10}}>
+      <div style={{ display: "flex", gap: 10 }}>
         <div>
           Fill
         </div>

@@ -1,63 +1,68 @@
 figma.showUI(__html__);
 
+figma.on('selectionchange', sendSelectionChange);
+figma.on('run', sendSelectionChange)
 
-figma.on('selectionchange', () => {
+figma.ui.onmessage = (msg) => {
+  if (msg.type === 'fill-with-images') {
+    handleFillWithImages(msg.keyword);
+  }
+};
+
+
+// actions
+
+function handleFillWithImages(keyword: string) {
+  const nodes = figma.currentPage.selection;
+  var completed = 0;
+  var total = nodes.length;
+  nodes.forEach((node) => {
+    if (node.type === 'RECTANGLE') {
+
+      const imageUrl = getImageUrl(node.width, node.height, keyword);
+
+      sendProgressUpdate(0);
+
+      // @ts-ignore for some reason
+      figma.createImageAsync(imageUrl).then((image: Image) => {
+        fillNodeWithImage(node, image);
+        completed++;
+        const progress = completed / total;
+        sendProgressUpdate(progress);
+      })
+
+    }
+  });
+}
+
+
+// helpers
+
+function sendSelectionChange() {
   const nodes = figma.currentPage.selection;
   console.log('selectionchange', nodes);
   figma.ui.postMessage({
     type: 'selection-change',
-    count: nodes.length, 
+    count: nodes.length,
     nodeTypes: nodes.map(node => node.type)
   });
-});
+}
 
+function sendProgressUpdate(progress: number) {
+  figma.ui.postMessage({
+    type: 'fill-progress',
+    progress
+  });
+}
 
-figma.ui.onmessage = (msg) => {
+function fillNodeWithImage(node: RectangleNode, image: Image) {
+  node.fills = [{
+    type: 'IMAGE',
+    imageHash: image.hash,
+    scaleMode: 'FILL',
+  }]
+}
 
-  if (msg.type === 'fill-with-images') {
-    console.log('filling with images', figma.currentPage.selection);
-    const nodes = figma.currentPage.selection;
-    if (nodes.length === 0) {
-      // figma.closePlugin('Select a frame to fill with images');
-      console.log('Select a frame to fill with images');
-    }
-    var completed = 0;
-    var total = nodes.length;
-    nodes.forEach((node) => {
-      if (node.type === 'RECTANGLE') {
-        console.log("got rectange")
-
-        const width = node.width;
-        const height = node.height;
-        const keyword = msg.keyword;
-        const imageUrl = `https://source.unsplash.com/${width}x${height}/?${keyword}`;
-
-        figma.ui.postMessage({
-          type: 'fill-progress',
-          progress: 0.0
-        });
-
-        // @ts-ignore
-        figma.createImageAsync(imageUrl).then((image: Image) => {
-          console.log('image', image);
-          node.fills = [{
-            type: 'IMAGE',
-            imageHash: image.hash,
-            scaleMode: 'FILL',
-          }]
-          completed++;
-          const progress = completed / total;
-          console.log('progress', progress);
-
-          figma.ui.postMessage({
-            type: 'fill-progress',
-            progress
-          });
-        })
-        
-      }
-    });
-  }
-
-
-};
+function getImageUrl(width: number, height: number, keyword: string) {
+  return `https://source.unsplash.com/${width}x${height}/?${keyword}`;
+}
