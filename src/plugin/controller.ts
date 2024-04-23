@@ -22,6 +22,10 @@ function handleFillWithImages(keyword: string) {
   nodes.forEach((node) => {
     if (node.type === 'RECTANGLE') {
 
+      // make the fill gray 
+      node.fills = [{ type: 'SOLID', color: { r: 0.5, g: 0.5, b: 0.5 } }];
+      
+    
       const imageUrl = getImageUrl(node.width, node.height, keyword);
 
       // start progress
